@@ -91,6 +91,7 @@ __PDE:
 
 .section .text
 .globl _start
+// GAS编译器中，_start作为程序的默认起始位置
 _start:
     // 还真是AT&T的写法
     // Q：设置这些寄存器的意义是什么？
@@ -119,3 +120,20 @@ _start:
     pushq %rax
     lretq
     // 64-bit mode code
+switch_seg:
+    .quad entry64
+entry64:
+    movq $0x10, %rax
+    movq %rax, %ds
+    movq %rax, %es
+    movq %rax, %gs
+    movq %rax, %ss
+    movq $0xffff800000007E00, %rsp /* rsp address*/
+    movq go_to_kernel(%rip), %rax /* movq address*/
+    pushq $0x08
+    pushq %rax
+    lretq
+go_to_kernel:
+    .quad Start_Kernel
+
+
