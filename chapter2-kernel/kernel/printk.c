@@ -30,6 +30,87 @@ void putchar(unsigned int * fb, int XSize, int x, int y, unsigned int FRColor, u
 }
 
 
+int vsprintf(char *buf, const char *fmt, va_list args)
+{
+    char *str, *s;
+    int flags;
+    int field_width;
+    int precision;
+    int len, i;
+    int qualifier;
+
+    for (str = buf; *fmt; fmt++)
+    {
+        if (*fmt != '%')
+        {
+            *str++ = *fmt;
+            continue;
+        }
+        flags = 0;
+        repeat:
+            fmt++;
+            switch (*fmt)
+            {
+                case '-':
+                    flags |= LEFT;
+                    goto repeat;
+                case '+':
+                    flags |= PLUS;
+                    goto repeat;
+                case ' ':
+                    flags |= SPACE;
+                    goto repeat;
+                case '#':
+                    flags |= SPECIAL;
+                    goto repeat;
+                case '0':
+                    flags |= ZEROPAD;
+                    goto repeat;
+                default:
+                    break;
+            }
+        /* get field width */
+        field_width = -1;
+        // 提取%后续的数字，表示数据区域的宽度
+        if (is_digit(*fmt))
+            field_width = skip_atoi(&fmt);
+        else if (*fmt == '*') {
+            // 如果不是数字而是*，则宽度由可变参数提供
+            fmt++;
+            field_width = va_arg(args, int);
+            if (field_width < 0) {
+                field_width = -field_width;
+                flags |= LEFT;
+            }
+        }
+        // 获取数据区域宽度后，提取出显示数据的精度
+        // 宽度后跟有.，其后的数字表明了显示数据的精度
+        /* get precision */
+        precision = -1;
+        if (*fmt == '.') {
+            fmt++;
+            if (is_digit(*fmt)) {
+                precision = skip_atoi(&fmt);
+            } else if (*fmt == '*') {
+                fmt++;
+                precision = va_arg(args, int);
+            }
+            if (precision < 0)
+                precision = 0;
+        }
+        // 随后显示数据的规格
+        qualifier = -1;
+        if (*fmt == 'h' || *fmt == 'l' || *fmt == 'L' || *fmt == 'Z') {
+            qualifier = *fmt;
+            fmt++;
+        }
+
+        
+    }
+    return 0;
+}
+
+
 int color_printk(unsigned int FRColor, unsigned int BKColor, const char * fmt, ...)
 {
     int i = 0;
