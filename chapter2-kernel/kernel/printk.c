@@ -104,10 +104,99 @@ int vsprintf(char *buf, const char *fmt, va_list args)
             qualifier = *fmt;
             fmt++;
         }
-
-        
+        // 如果匹配出字符c，程序将可变参数转换为一个字符
+        switch (*fmt) {
+            case 'c':
+                if (!(flags & LEFT)) {
+                    while (--field_width > 0) {
+                        *str++ = ' ';
+                    }
+                }
+                *str++ = (unsigned char)va_arg(args, int);
+                while (--field_width > 0)
+                    *str++ = ' ';
+                break;
+            case 's':
+                s = va_arg(args, char*);
+                if (!s)
+                    s = '\0';
+                len = strlen(s);
+                if (precision < 0) {
+                    precision = len;
+                } else if (len > precision){
+                    len = precision;
+                }
+                if (!(flags & LEFT))
+                    while (len < field_width--)
+                        *str++ = ' ';
+                for (i = 0; i < len; i++)
+                    *str++ = *s++;
+                while (len < field_width--)
+                    *str++ = ' ';
+                break;
+            case 'o':
+                if (qualifier == '1')
+                    str = number(str, va_arg(args, unsigned long), 8, field_width, precision, flags);
+                else
+                    str = number(str, va_arg(args, unsigned int), 8, field_width, precision, flags);
+                break;
+            case 'p':
+                if (field_width == -1) {
+                    field_width = 2 * sizeof(void *);
+                    flags |= ZEROPAD;
+                }
+                str = number(str, (unsigned long)va_arg(args, void *), 16, field_width, precision, flags);
+                break;
+            case 'x':
+                flags |= SMALL;
+            case 'X':
+                if (qualifier == '1') {
+                    str = number(str, va_arg(args, unsigned long), 16, field_width, precision, flags);
+                } else {
+                    str = number(str, va_arg(args, unsigned int), 16, field_width, precision, flags);
+                }
+                break;
+            case 'd':
+            case 'i':
+                flags |= SIGN;
+            case 'u':
+                if (qualifier == '1')
+                    str = number(str, va_arg(args, unsigned long), 10, field_width, precision, flags);
+                else
+                    str = number(str, va_arg(args, unsigned int), 10, field_width, precision, flags);
+                break;
+            case 'n':
+                if (qualifier == '1') {
+                    long *ip = va_arg(args, long *);
+                    *ip = (str - buf);
+                } else {
+                    int *ip = va_arg(args, int *);
+                    *ip = (str - buf);
+                }
+                break;
+            case '%':
+                *str++ = '%';
+                break;
+            default:
+                *str++ = '%';
+                if (*fmt)
+                    *str++ = *fmt;
+                else
+                    fmt--;
+                break;
+        }
     }
     return 0;
+}
+
+int skip_atoi(const char **s)
+{
+    // 只能将数值字母转换为整数值，竟然这样简单
+    // need to mark
+    int i = 0;
+    while (is_digit(**s))
+        i = i*10 + *((*s)++) - '0';
+    return i;
 }
 
 
