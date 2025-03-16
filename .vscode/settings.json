@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "lib.h": "c"
+        "lib.h": "c",
+        "printk.h": "c",
+        "stdarg.h": "c"
     }
 }

@@ -4,6 +4,82 @@
 #include "linkage.h"
 
 
+// number函数是干啥的？
+// static的作用是啥来着？
+static char * number(char* str, long num, int base, int size, int precision, int type)
+{
+    char c, sign, tmp[50];
+    // const指针是干啥的来着？同步也看一下C语言那几本经典的书；
+    const char *digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    int i;
+    if (type & SMALL)
+        digits = "0123456789abcdefghijklmnopqrstuvwxyz";
+    if (type & LEFT)
+        type &= ~ZEROPAD;
+    if (base < 2 || base > 36)
+        return 0;
+    c = (type & ZEROPAD) ? '0' : ' ';
+    sign = 0;
+    if (type & SIGN && num < 0) {
+        sign = '-';
+        num = -num;
+    } else {
+        sign = (type & PLUS) ? '+' : ((type & SPACE) ? ' ' : 0);
+    }
+
+    if (sign)
+        size--;
+    // 进制设置
+    if (type & SPECIAL)
+        if (base == 16) size -= 2;
+        else if (base == 8) size--;
+    
+    i = 0;
+    if (num == 0)
+        tmp[i++] = '0';
+    else {
+        while(num != 0)
+            tmp[i++] = digits[do_div(num, base)];
+    }
+    
+    if (i > precision) precision = i;
+    size -= precision;
+
+    if (!(type & (ZEROPAD + LEFT)))
+        while (size-- > 0)
+            *str++ = ' ';
+    
+    if (sign)
+        *str++ = sign;
+    
+    if (type & SPECIAL) {
+        if (base == 8)
+            *str++ = '0';
+        else if (base == 16) {
+            *str++ = '0';
+            *str++ = digits[33];
+        }
+    }
+
+    if (!(type & LEFT)) {
+        while (size-- > 0) {
+            *str++ = c;
+        }
+    }
+
+    while (i < precision--)
+        *str++ = '0';
+    
+    while (i-- > 0)
+        *str++ = tmp[i];
+
+    while (size-- > 0)
+        *str++ = ' ';
+    
+    return str;
+}
+
+
 void putchar(unsigned int * fb, int XSize, int x, int y, unsigned int FRColor, unsigned int BKColor, unsigned char font)
 {
     // 
@@ -18,7 +94,7 @@ void putchar(unsigned int * fb, int XSize, int x, int y, unsigned int FRColor, u
         testval = 0x100;
         for (j = 0; j < 8; j++) {
             testval = testval >> 1;
-            if (*fontp * testval) {
+            if (*fontp & testval) {
                 *addr = FRColor;
             } else {
                 *addr = BKColor;
@@ -186,7 +262,9 @@ int vsprintf(char *buf, const char *fmt, va_list args)
                 break;
         }
     }
-    return 0;
+
+    *str = '\0';
+    return str-buf;
 }
 
 int skip_atoi(const char **s)

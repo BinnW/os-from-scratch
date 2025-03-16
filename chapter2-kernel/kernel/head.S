@@ -39,12 +39,155 @@ entry64:
     movq %rax, %gs
     movq %rax, %ss
     movq $0xffff800000007E00, %rsp /* rsp address*/
-    movq go_to_kernel(%rip), %rax /* movq address*/
+
+setup_IDT:
+    // 计算ignore_int的地址，保存在%rdx当中
+    leaq ignore_int(%rip), %rdx
+    // 0x08是内核代码段选择子，左移16位为后续拼接预留空间
+    ; 此时rax是0x00080000
+    movq $(0x08 << 16), %rax
+    // 将rdx的低16位赋值到rax的低16位上，0x08在高16位
+    ; 此时rax是0x0008xxxx，xxxx此处是ignore_int的低16位
+    movw %dx, %ax
+    // 把中断门描述符左移32位存入，movq的立即数存在32位的限制，所以最好使用movabsq存储
+    ; movabsq $0x8E0000000000, %rcx
+    movq $(0x8E00 << 32), %rcx
+    ; 此时rax的值是0x8E00_0008_xxxx
+    addq %rcx, %rax
+    ; ignore_int的低32位存入rcx的低32位，假设为0x0000_0000_ffff_xxxx
+    movl %edx, %ecx
+    ; ecx右移16位，此时rcx为0x0000_0000_0000_ffff
+    shrl $16, %ecx
+    ; 再左移48位，此时rcx为0xffff_0000_0000_0000
+    shlq $48, %rcx
+    ; 此时rax是0xffff_8E00_0008_xxxx
+    addq %rcx, %rax
+    ; 此时rdx是0x0000_0000_dddd_eeee（高32位变成了低32位）
+    shrq $32, %rdx
+    ; 接下来将IDT_Table的位置存入rdi
+    leaq IDT_Table(%rip), %rdi
+    ; 2^8是256，设定一个循环，存256个rax到IDT表中，需要解析一下这里rax的意思
+    mov  $256, %rcx
+
+rp_sidt:
+    ; 把rax存入rdi的位置，存入IDT
+    movq %rax, (%rdi)
+    ; 讲高32位存入IDT的8位偏移后
+    movq %rdx, 8(%rdi)
+    ; rdi需要加16，也就是偏移16个字节这样，128bit
+    addq $0x10, %rdi
+    ; 到这里如果想理解
+    ; 然后将rcx-1，直到不满足跳转rp_sidt的条件
+    dec  %rcx
+    jne  rp_sidt
+
+
+setup_TSS64:
+    // 初始化GDT（IA-32e模式）内的TSS Descriptor
+    leaq TSS64_Table(%rip), %rdx
+    // 
+    xorq %rax, %rax
+    xorq %rcx, %rcx
+    movq $0x89, %rax
+    shlq $40, %rax
+    movl %edx, %ecx
+    shrl $24, %ecx
+    shlq $56, %rcx
+    addq %rcx, %rax
+    // 清零，重新进行别的运算
+    xorq %rcx, %rcx
+    movl %edx, %ecx
+    andl $0xffffff, %ecx
+    shlq $16, %rcx
+    addq %rcx, %rax
+    addq $103, %rax
+    leaq GDT_Table(%rip), %rdi
+    movq %rax, 64(%rdi)
+    shrq $32, %rdx
+    movq %rdx, 72(%rdi)
+
+    mov $0x40, %ax
+    // 通过ltr汇编指令把TSS Descriptor的选择子加载到TR寄存器中
+    ltr %ax
+
+    movq go_to_kernel(%rip), %rax
     pushq $0x08
     pushq %rax
     lretq
+    
 go_to_kernel:
     .quad Start_Kernel
+
+ignore_int:
+    cld
+    // 先保存各寄存器的值
+    pushq %rax
+    pushq %rbx
+    pushq %rcx
+    pushq %rdx
+    pushq %rbp
+    pushq %rdi
+    pushq %rsi
+
+    pushq %r8
+    pushq %r9
+    pushq %r10
+    pushq %r11
+    pushq %r12
+    pushq %r13
+    pushq %r14
+    pushq %r15
+
+    // 将ds和es段寄存器设置成内核数据段
+    movq %es, %rax
+    pushq %rax
+    movq %ds, %rax
+    pushq %rax
+
+    movq $0x10, %rax
+    movq %rax, %ds
+    movq %rax, %es
+
+    // 为color_printk准备参数
+    // leaq get address
+    leaq int_msg(%rip), %rax
+    pushq %rax
+    movq %rax, %rdx
+    movq $0x00000000, %rsi
+    movq $0x00ff0000, %rdi
+    movq $0, %rax
+    callq color_printk
+    addq $0x8, %rsp
+
+Loop:
+    jmp Loop
+
+    popq %rax
+    movq %rax, %ds
+    popq %rax
+    movq %rax, %es
+
+    popq %r15
+    popq %r14
+    popq %r13
+    popq %r12
+    popq %r11
+    popq %r10
+    popq %r9
+    popq %r8
+
+    popq %rsi
+    popq %rdi
+    popq %rbp
+    popq %rdx
+    popq %rcx
+    popq %rbx
+    popq %rax     
+
+    iretq
+
+int_msg:
+    .asciz "Unknown interrupt or fault at RIP\n"
 
 // init page
 .align 8

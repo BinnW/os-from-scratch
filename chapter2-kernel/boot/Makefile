@@ -1,5 +1,4 @@
-all: 
-	boot.bin loader.bin
+all: boot.bin loader.bin
 
 loader.bin:
 	nasm loader.asm -o loader.bin
