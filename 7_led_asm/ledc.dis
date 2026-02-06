@@ -1,0 +1,185 @@
+
+ledc.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+87800000 <_start>:
+87800000:	e10f0000 	mrs	r0, CPSR
+87800004:	e3c0001f 	bic	r0, r0, #31
+87800008:	e3800013 	orr	r0, r0, #19
+8780000c:	e129f000 	msr	CPSR_fc, r0
+87800010:	e51fd000 	ldr	sp, [pc, #-0]	@ 87800018 <_start+0x18>
+87800014:	ea000079 	b	87800200 <main>
+87800018:	80200000 	.word	0x80200000
+8780001c:	00001941 	.word	0x00001941
+87800020:	61656100 	.word	0x61656100
+87800024:	01006962 	.word	0x01006962
+87800028:	0000000f 	.word	0x0000000f
+8780002c:	00543505 	.word	0x00543505
+87800030:	01080306 	.word	0x01080306
+87800034:	00000109 	.word	0x00000109
+
+87800038 <clk_enable>:
+87800038:	e52db004 	push	{fp}		@ (str fp, [sp, #-4]!)
+8780003c:	e28db000 	add	fp, sp, #0
+87800040:	e59f305c 	ldr	r3, [pc, #92]	@ 878000a4 <clk_enable+0x6c>
+87800044:	e3e02000 	mvn	r2, #0
+87800048:	e5832000 	str	r2, [r3]
+8780004c:	e59f3054 	ldr	r3, [pc, #84]	@ 878000a8 <clk_enable+0x70>
+87800050:	e3e02000 	mvn	r2, #0
+87800054:	e5832000 	str	r2, [r3]
+87800058:	e59f304c 	ldr	r3, [pc, #76]	@ 878000ac <clk_enable+0x74>
+8780005c:	e3e02000 	mvn	r2, #0
+87800060:	e5832000 	str	r2, [r3]
+87800064:	e59f3044 	ldr	r3, [pc, #68]	@ 878000b0 <clk_enable+0x78>
+87800068:	e3e02000 	mvn	r2, #0
+8780006c:	e5832000 	str	r2, [r3]
+87800070:	e59f303c 	ldr	r3, [pc, #60]	@ 878000b4 <clk_enable+0x7c>
+87800074:	e3e02000 	mvn	r2, #0
+87800078:	e5832000 	str	r2, [r3]
+8780007c:	e59f3034 	ldr	r3, [pc, #52]	@ 878000b8 <clk_enable+0x80>
+87800080:	e3e02000 	mvn	r2, #0
+87800084:	e5832000 	str	r2, [r3]
+87800088:	e59f302c 	ldr	r3, [pc, #44]	@ 878000bc <clk_enable+0x84>
+8780008c:	e3e02000 	mvn	r2, #0
+87800090:	e5832000 	str	r2, [r3]
+87800094:	e1a00000 	nop			@ (mov r0, r0)
+87800098:	e28bd000 	add	sp, fp, #0
+8780009c:	e49db004 	pop	{fp}		@ (ldr fp, [sp], #4)
+878000a0:	e12fff1e 	bx	lr
+878000a4:	020c4068 	.word	0x020c4068
+878000a8:	020c406c 	.word	0x020c406c
+878000ac:	020c4070 	.word	0x020c4070
+878000b0:	020c4074 	.word	0x020c4074
+878000b4:	020c4078 	.word	0x020c4078
+878000b8:	020c407c 	.word	0x020c407c
+878000bc:	020c4080 	.word	0x020c4080
+
+878000c0 <led_init>:
+878000c0:	e52db004 	push	{fp}		@ (str fp, [sp, #-4]!)
+878000c4:	e28db000 	add	fp, sp, #0
+878000c8:	e59f3038 	ldr	r3, [pc, #56]	@ 87800108 <led_init+0x48>
+878000cc:	e3a02005 	mov	r2, #5
+878000d0:	e5832000 	str	r2, [r3]
+878000d4:	e59f3030 	ldr	r3, [pc, #48]	@ 8780010c <led_init+0x4c>
+878000d8:	e59f2030 	ldr	r2, [pc, #48]	@ 87800110 <led_init+0x50>
+878000dc:	e5832000 	str	r2, [r3]
+878000e0:	e59f302c 	ldr	r3, [pc, #44]	@ 87800114 <led_init+0x54>
+878000e4:	e3a02008 	mov	r2, #8
+878000e8:	e5832000 	str	r2, [r3]
+878000ec:	e59f3024 	ldr	r3, [pc, #36]	@ 87800118 <led_init+0x58>
+878000f0:	e3a02000 	mov	r2, #0
+878000f4:	e5832000 	str	r2, [r3]
+878000f8:	e1a00000 	nop			@ (mov r0, r0)
+878000fc:	e28bd000 	add	sp, fp, #0
+87800100:	e49db004 	pop	{fp}		@ (ldr fp, [sp], #4)
+87800104:	e12fff1e 	bx	lr
+87800108:	020e0068 	.word	0x020e0068
+8780010c:	020e02f4 	.word	0x020e02f4
+87800110:	000010b0 	.word	0x000010b0
+87800114:	0209c004 	.word	0x0209c004
+87800118:	0209c000 	.word	0x0209c000
+
+8780011c <led_off>:
+8780011c:	e52db004 	push	{fp}		@ (str fp, [sp, #-4]!)
+87800120:	e28db000 	add	fp, sp, #0
+87800124:	e59f301c 	ldr	r3, [pc, #28]	@ 87800148 <led_off+0x2c>
+87800128:	e5933000 	ldr	r3, [r3]
+8780012c:	e59f2014 	ldr	r2, [pc, #20]	@ 87800148 <led_off+0x2c>
+87800130:	e3833008 	orr	r3, r3, #8
+87800134:	e5823000 	str	r3, [r2]
+87800138:	e1a00000 	nop			@ (mov r0, r0)
+8780013c:	e28bd000 	add	sp, fp, #0
+87800140:	e49db004 	pop	{fp}		@ (ldr fp, [sp], #4)
+87800144:	e12fff1e 	bx	lr
+87800148:	0209c000 	.word	0x0209c000
+
+8780014c <led_on>:
+8780014c:	e52db004 	push	{fp}		@ (str fp, [sp, #-4]!)
+87800150:	e28db000 	add	fp, sp, #0
+87800154:	e59f301c 	ldr	r3, [pc, #28]	@ 87800178 <led_on+0x2c>
+87800158:	e5933000 	ldr	r3, [r3]
+8780015c:	e59f2014 	ldr	r2, [pc, #20]	@ 87800178 <led_on+0x2c>
+87800160:	e3c33008 	bic	r3, r3, #8
+87800164:	e5823000 	str	r3, [r2]
+87800168:	e1a00000 	nop			@ (mov r0, r0)
+8780016c:	e28bd000 	add	sp, fp, #0
+87800170:	e49db004 	pop	{fp}		@ (ldr fp, [sp], #4)
+87800174:	e12fff1e 	bx	lr
+87800178:	0209c000 	.word	0x0209c000
+
+8780017c <delay_short>:
+8780017c:	e52db004 	push	{fp}		@ (str fp, [sp, #-4]!)
+87800180:	e28db000 	add	fp, sp, #0
+87800184:	e24dd00c 	sub	sp, sp, #12
+87800188:	e50b0008 	str	r0, [fp, #-8]
+8780018c:	ea000000 	b	87800194 <delay_short+0x18>
+87800190:	e1a00000 	nop			@ (mov r0, r0)
+87800194:	e51b3008 	ldr	r3, [fp, #-8]
+87800198:	e2432001 	sub	r2, r3, #1
+8780019c:	e50b2008 	str	r2, [fp, #-8]
+878001a0:	e3530000 	cmp	r3, #0
+878001a4:	1afffff9 	bne	87800190 <delay_short+0x14>
+878001a8:	e1a00000 	nop			@ (mov r0, r0)
+878001ac:	e1a00000 	nop			@ (mov r0, r0)
+878001b0:	e28bd000 	add	sp, fp, #0
+878001b4:	e49db004 	pop	{fp}		@ (ldr fp, [sp], #4)
+878001b8:	e12fff1e 	bx	lr
+
+878001bc <delay>:
+878001bc:	e92d4800 	push	{fp, lr}
+878001c0:	e28db004 	add	fp, sp, #4
+878001c4:	e24dd008 	sub	sp, sp, #8
+878001c8:	e50b0008 	str	r0, [fp, #-8]
+878001cc:	ea000002 	b	878001dc <delay+0x20>
+878001d0:	e51b3008 	ldr	r3, [fp, #-8]
+878001d4:	e1a00003 	mov	r0, r3
+878001d8:	ebffffe7 	bl	8780017c <delay_short>
+878001dc:	e51b3008 	ldr	r3, [fp, #-8]
+878001e0:	e2432001 	sub	r2, r3, #1
+878001e4:	e50b2008 	str	r2, [fp, #-8]
+878001e8:	e3530000 	cmp	r3, #0
+878001ec:	1afffff7 	bne	878001d0 <delay+0x14>
+878001f0:	e1a00000 	nop			@ (mov r0, r0)
+878001f4:	e1a00000 	nop			@ (mov r0, r0)
+878001f8:	e24bd004 	sub	sp, fp, #4
+878001fc:	e8bd8800 	pop	{fp, pc}
+
+87800200 <main>:
+87800200:	e92d4800 	push	{fp, lr}
+87800204:	e28db004 	add	fp, sp, #4
+87800208:	ebffff8a 	bl	87800038 <clk_enable>
+8780020c:	ebffffab 	bl	878000c0 <led_init>
+87800210:	ebffffcd 	bl	8780014c <led_on>
+87800214:	e3a00f7d 	mov	r0, #500	@ 0x1f4
+87800218:	ebffffe7 	bl	878001bc <delay>
+8780021c:	ebffffbe 	bl	8780011c <led_off>
+87800220:	e3a00f7d 	mov	r0, #500	@ 0x1f4
+87800224:	ebffffe4 	bl	878001bc <delay>
+87800228:	e1a00000 	nop			@ (mov r0, r0)
+8780022c:	eafffff7 	b	87800210 <main+0x10>
+87800230:	3a434347 	.word	0x3a434347
+87800234:	62552820 	.word	0x62552820
+87800238:	75746e75 	.word	0x75746e75
+8780023c:	2e333120 	.word	0x2e333120
+87800240:	2d302e33 	.word	0x2d302e33
+87800244:	75627536 	.word	0x75627536
+87800248:	3275746e 	.word	0x3275746e
+8780024c:	2e34327e 	.word	0x2e34327e
+87800250:	20293430 	.word	0x20293430
+87800254:	332e3331 	.word	0x332e3331
+87800258:	302e      	.short	0x302e
+8780025a:	00          	.byte	0x00
+8780025b:	41          	.byte	0x41
+8780025c:	00000029 	.word	0x00000029
+87800260:	62616561 	.word	0x62616561
+87800264:	1f010069 	.word	0x1f010069
+87800268:	05000000 	.word	0x05000000
+8780026c:	06005435 	.word	0x06005435
+87800270:	09010803 	.word	0x09010803
+87800274:	14041201 	.word	0x14041201
+87800278:	17011501 	.word	0x17011501
+8780027c:	19011803 	.word	0x19011803
+87800280:	1e021a01 	.word	0x1e021a01
+87800284:	06          	.byte	0x06
