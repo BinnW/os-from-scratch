@@ -1,0 +1,16 @@
+CompileFlags:
+  Add:
+    - -Iimx6ul
+    - -Ibsp/clk
+    - -Ibsp/led
+    - -Ibsp/delay
+    - -Ibsp/beep
+    - -Ibsp/gpio
+    - -Ibsp/key
+    - -Ibsp/exit
+    - -Ibsp/int
+    - -Ibsp/epittimer
+    - -Wall
+    - -nostdlib
+    - -march=armv7-a+fp
+    - --target=arm-linux-gnueabi
